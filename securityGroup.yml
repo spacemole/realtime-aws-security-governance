@@ -1,0 +1,49 @@
+policies:
+  - name: Security-group-public-access-check
+    resource: security-group
+    description: |
+      Checks all created security groups for pubilc access ("0.0.0.0"), or security groups modified to allow public access.
+      Tags public access groups and notifys admin via email.
+    mode:
+        # cloud trail enable real time policy execution
+        type: cloudtrail
+        # Iam role in AWS for Cloud custodian to gain permissions
+        role: TimLambdaAdmin
+        events:
+          # event for adding new incomming securtiy rule
+          - source: ec2.amazonaws.com
+            event: AuthorizeSecurityGroupIngress
+            ids: "responseElements.securityGroupRuleSet.items[].groupId"
+          # event for adding new outgoing securtiy rule
+          - source: ec2.amazonaws.com
+            event: AuthorizeSecurityGroupEgress
+            ids: "responseElements.securityGroupRuleSet.items[].groupId"
+          # event for removing new incomming securtiy rule
+          - source: ec2.amazonaws.com
+            event: RevokeSecurityGroupIngress
+            ids: "requestParameters.groupId"
+          # event for removing new outgoing securtiy rule
+          - source: ec2.amazonaws.com
+            event: RevokeSecurityGroupEgress
+            ids: "requestParameters.groupId"
+          # event for creating a new security group
+          - source: ec2.amazonaws.com
+            event: CreateSecurityGroup
+            ids: "responseElements.groupId"
+          # event for modifying a security group rule
+          - source: ec2.amazonaws.com
+            event: ModifySecurityGroupRules
+            ids: "requestParameters.ModifySecurityGroupRulesRequest.GroupId"
+    filters:
+       - or:
+            # filters all IPv4 addresses  
+             - type: ingress
+               Cidr: "0.0.0.0/0"
+            # filters all IPv6 addresses  
+             - type: ingress
+               CidrV6: "::/0"
+    actions:
+      # adds tag to filtered security groups
+      - type: tag
+        tags:
+          Open-security: Detected

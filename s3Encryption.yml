@@ -1,0 +1,29 @@
+policies:
+  - name: s3-bucket-encryption-check
+    resource: s3
+    description: |
+      Checks all created or modified s3 buckets encryption staus.
+      Tags and notifys on buckets with no encryprion.
+    mode:
+        # cloud trail enable real time policy execution
+        type: cloudtrail
+        # Iam role in AWS for Cloud custodian to gain permissions
+        role: TimLambdaAdmin
+        events:
+          # event for creating new s3 bucket
+          - source: s3.amazonaws.com
+            event: CreateBucket
+            ids: "requestParameters.bucketName"
+          # event for removal of encryption
+          - source: s3.amazonaws.com
+            event: DeleteBucketEncryption
+            ids: "requestParameters.bucketName"     
+    filters:
+          # filter buckets without encryption
+          - type: bucket-encryption
+            state: False
+    actions:
+      # adds tag to filtered s3 buckets
+      - type: tag
+        tags:
+          Encryption: no-encryption
