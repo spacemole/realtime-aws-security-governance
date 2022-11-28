@@ -20,7 +20,6 @@ The AWS Lambda function analyses the events actions and filter agains uncomplian
 
 
 ## Installation Guide
----
 The following stages must be completed
 
 - Install cloud custodian
