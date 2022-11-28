@@ -4,7 +4,6 @@
 
 
 ## About the project
----
 This project contains resources configured for enabaling real-time security notifications for AWS infastructures using cloud custodian.
 
 ##### What is Cloud Custodian?
