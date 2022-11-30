@@ -1,0 +1,545 @@
+{
+    "Resources": {
+     "newbucket416AE7B8": {
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/newbucket/Resource"
+      }
+     },
+     "newtrailS3690D3E80": {
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/newtrail/S3/Resource"
+      }
+     },
+     "newtrailS3Policy1B8E1F8C": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+       "Bucket": {
+        "Ref": "newtrailS3690D3E80"
+       },
+       "PolicyDocument": {
+        "Statement": [
+         {
+          "Action": "s3:*",
+          "Condition": {
+           "Bool": {
+            "aws:SecureTransport": "false"
+           }
+          },
+          "Effect": "Deny",
+          "Principal": {
+           "AWS": "*"
+          },
+          "Resource": [
+           {
+            "Fn::GetAtt": [
+             "newtrailS3690D3E80",
+             "Arn"
+            ]
+           },
+           {
+            "Fn::Join": [
+             "",
+             [
+              {
+               "Fn::GetAtt": [
+                "newtrailS3690D3E80",
+                "Arn"
+               ]
+              },
+              "/*"
+             ]
+            ]
+           }
+          ]
+         },
+         {
+          "Action": "s3:GetBucketAcl",
+          "Effect": "Allow",
+          "Principal": {
+           "Service": "cloudtrail.amazonaws.com"
+          },
+          "Resource": {
+           "Fn::GetAtt": [
+            "newtrailS3690D3E80",
+            "Arn"
+           ]
+          }
+         },
+         {
+          "Action": "s3:PutObject",
+          "Condition": {
+           "StringEquals": {
+            "s3:x-amz-acl": "bucket-owner-full-control"
+           }
+          },
+          "Effect": "Allow",
+          "Principal": {
+           "Service": "cloudtrail.amazonaws.com"
+          },
+          "Resource": {
+           "Fn::Join": [
+            "",
+            [
+             {
+              "Fn::GetAtt": [
+               "newtrailS3690D3E80",
+               "Arn"
+              ]
+             },
+             "/AWSLogs/",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             "/*"
+            ]
+           ]
+          }
+         }
+        ],
+        "Version": "2012-10-17"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/newtrail/S3/Policy/Resource"
+      }
+     },
+     "newtrail21027FB0": {
+      "Type": "AWS::CloudTrail::Trail",
+      "Properties": {
+       "IsLogging": true,
+       "S3BucketName": {
+        "Ref": "newtrailS3690D3E80"
+       },
+       "EnableLogFileValidation": true,
+       "EventSelectors": [
+        {
+         "DataResources": [
+          {
+           "Type": "AWS::S3::Object",
+           "Values": [
+            {
+             "Fn::Join": [
+              "",
+              [
+               {
+                "Fn::GetAtt": [
+                 "newbucket416AE7B8",
+                 "Arn"
+                ]
+               },
+               "/"
+              ]
+             ]
+            }
+           ]
+          }
+         ],
+         "ReadWriteType": "WriteOnly"
+        }
+       ],
+       "IncludeGlobalServiceEvents": true,
+       "IsMultiRegionTrail": true
+      },
+      "DependsOn": [
+       "newtrailS3Policy1B8E1F8C"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/newtrail/Resource"
+      }
+     },
+     "CloudCustodianSns687E5C3D": {
+      "Type": "AWS::SNS::Topic",
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CloudCustodianSns/Resource"
+      }
+     },
+     "CloudCustodianSnsevelyncaviedesagmailcomDB5AC553": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+       "Protocol": "email",
+       "TopicArn": {
+        "Ref": "CloudCustodianSns687E5C3D"
+       },
+       "Endpoint": "evelyncaviedesa@gmail.com"
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CloudCustodianSns/evelyncaviedesa@gmail.com/Resource"
+      }
+     },
+     "CloudCustodianSqs079A617A": {
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CloudCustodianSqs/Resource"
+      }
+     },
+     "CloudCustodianSqsPolicy8F76DA19": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+       "PolicyDocument": {
+        "Statement": [
+         {
+          "Action": "sqs:SendMessage",
+          "Condition": {
+           "ArnEquals": {
+            "aws:SourceArn": {
+             "Ref": "CloudCustodianSns687E5C3D"
+            }
+           }
+          },
+          "Effect": "Allow",
+          "Principal": {
+           "Service": "sns.amazonaws.com"
+          },
+          "Resource": {
+           "Fn::GetAtt": [
+            "CloudCustodianSqs079A617A",
+            "Arn"
+           ]
+          }
+         }
+        ],
+        "Version": "2012-10-17"
+       },
+       "Queues": [
+        {
+         "Ref": "CloudCustodianSqs079A617A"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CloudCustodianSqs/Policy/Resource"
+      }
+     },
+     "CloudCustodianSqsProjectCdkStackCloudCustodianSnsE50A1038B8C12A17": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+       "Protocol": "sqs",
+       "TopicArn": {
+        "Ref": "CloudCustodianSns687E5C3D"
+       },
+       "Endpoint": {
+        "Fn::GetAtt": [
+         "CloudCustodianSqs079A617A",
+         "Arn"
+        ]
+       }
+      },
+      "DependsOn": [
+       "CloudCustodianSqsPolicy8F76DA19"
+      ],
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CloudCustodianSqs/ProjectCdkStackCloudCustodianSnsE50A1038/Resource"
+      }
+     },
+     "receipt": {
+      "Type": "AWS::SES::EmailIdentity",
+      "Properties": {
+       "EmailIdentity": "103483662@student.swin.edu.au"
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/receipt"
+      }
+     },
+     "sender": {
+      "Type": "AWS::SES::EmailIdentity",
+      "Properties": {
+       "EmailIdentity": "evelyncaviedesa@gmail.com"
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/sender"
+      }
+     },
+     "EncryptionGroup": {
+      "Type": "AWS::ResourceGroups::Group",
+      "Properties": {
+       "Name": "EncryptionPolicy",
+       "ResourceQuery": {
+        "Query": {
+         "TagFilters": [
+          {
+           "Key": "Encryption",
+           "Values": [
+            "no-encryption"
+           ]
+          }
+         ]
+        },
+        "Type": "TAG_FILTERS_1_0"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/EncryptionGroup"
+      }
+     },
+     "OpenSecGroup": {
+      "Type": "AWS::ResourceGroups::Group",
+      "Properties": {
+       "Name": "SecurityGroupPolicy",
+       "ResourceQuery": {
+        "Query": {
+         "TagFilters": [
+          {
+           "Key": "Open-security",
+           "Values": [
+            "Detected"
+           ]
+          }
+         ]
+        },
+        "Type": "TAG_FILTERS_1_0"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/OpenSecGroup"
+      }
+     },
+     "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+       "Analytics": "v2:deflate64:H4sIAAAAAAAA/01NyQ6CMBT8Fu7lucbEq8QYbyjeDZSqT0qLXWII4d/tQoKXzvams4btHpZJ+dUprZuUYwVDYUraEGfdB72B4WBpwwzJHmJiEXLJkfazHfVIKJe2NqpEDsPNgz8JZCRaaGfKDmkwAylspanCzqAU3v3XrvFxjYtllvkskvDO83/S3TMNzju2bu9cM2HQ9EQxLa2i7Kmk7UJ+8mz07euUeZ5JUWPczXvzkmKxgdUSdslbI6bKut9aBteIPwAXxnE6AQAA"
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CDKMetadata/Default"
+      },
+      "Condition": "CDKMetadataAvailable"
+     }
+    },
+    "Conditions": {
+     "CDKMetadataAvailable": {
+      "Fn::Or": [
+       {
+        "Fn::Or": [
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "af-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-east-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-northeast-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-northeast-2"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-southeast-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-southeast-2"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ca-central-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "cn-north-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "cn-northwest-1"
+          ]
+         }
+        ]
+       },
+       {
+        "Fn::Or": [
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-central-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-north-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-west-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-west-2"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-west-3"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "me-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "sa-east-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-east-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-east-2"
+          ]
+         }
+        ]
+       },
+       {
+        "Fn::Or": [
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-west-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-west-2"
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    },
+    "Parameters": {
+     "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+     }
+    },
+    "Rules": {
+     "CheckBootstrapVersion": {
+      "Assertions": [
+       {
+        "Assert": {
+         "Fn::Not": [
+          {
+           "Fn::Contains": [
+            [
+             "1",
+             "2",
+             "3",
+             "4",
+             "5"
+            ],
+            {
+             "Ref": "BootstrapVersion"
+            }
+           ]
+          }
+         ]
+        },
+        "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+       }
+      ]
+     }
+    }
+   }
