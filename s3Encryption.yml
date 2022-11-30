@@ -30,3 +30,12 @@ policies:
           Security-issue: detected
           # Specific issue tag
           Encryption: no-encryption
+        notify:
+          template: email.html
+          subject: Bucket No-Encryption account {{ account_id }} region {{ region }} 
+          violation_desc: Bucket Encryption Disable
+          to:
+            - ecaviedesar@gmail.com
+          transport:
+            type: sqs
+            queue: https://sqs.ap-southeast-2.amazonaws.com/174738046784/ProjectCdkStack-CloudCustodianSqs079A617A-hCq3Fe2GOZoH

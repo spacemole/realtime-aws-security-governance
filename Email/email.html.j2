@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Custodian Notification - {{ account_id }}</title>
+</head>
+
+<style type="text/css">
+  .tg {
+    font-family: Arial, Helvetica, sans-serif !important;
+  }
+
+  .tg td {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+    padding: 10px 5px;
+    word-break: normal;
+  }
+
+  .tg th {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    overflow: hidden;
+    padding: 10px 5px;
+    word-break: normal;
+  }
+
+  .tg .tg-qmsw {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 12px;
+    text-align: left;
+    vertical-align: top
+  }
+
+  .tg .tg-s74x {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top
+  }
+</style>
+<body>
+<h3>Violation {{  action['violation_desc']  }} </h3>
+<table class="tg">
+    <tr>
+      <td class="tg-s74x">Account:</td>
+      <td class="tg-qmsw">{{ account_id }}</td>
+    </tr>
+    <tr>
+      <td class="tg-s74x">Region:</td>
+      <td class="tg-qmsw">{{ region }}</td>
+    </tr>
+    <tr>
+      <td class="tg-s74x">Resource:</td>
+      <td class="tg-qmsw">{{ policy['resource'] }}</td>
+    </tr>
+    <tr>
+      <td class="tg-s74x">Resource Details</td>
+      <td class="tg-qmsw">{% for resource in resources %}
+        {{ format_resource(resource, policy['resource']) }}
+        {% endfor %}</td>
+    </tr>
+    <tr>
+      <td class="tg-s74x">Event Time:</td>
+      <td class="tg-qmsw">{{ event['time'] }}</td>
+    </tr>
+    <tr>
+      <td class="tg-s74x">Arn:</td>
+      <td class="tg-qmsw">{{ event['detail']['userIdentity']['arn'] }}</td>
+    </tr>
+    <tr>
+      <td class="tg-s74x">Matched Policy:</td>
+      <td class="tg-qmsw">{{ policy|yaml_safe(default_flow_style=False) }}</td>
+    </tr>
+</table>
+</body>
+
+</html>

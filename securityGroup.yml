@@ -50,3 +50,12 @@ policies:
           Security-issue: detected
           # Specific issue tag
           s3-Open-security: detected
+        notify:
+          template: email.html
+          subject: Security Group Open account {{ account_id }} region {{ region }} 
+          violation_desc: Security Group CIDR = 0.0.0.0/0
+          to:
+            - ecaviedesar@gmail.com
+          transport:
+            type: sqs
+            queue: https://sqs.ap-southeast-2.amazonaws.com/174738046784/ProjectCdkStack-CloudCustodianSqs079A617A-hCq3Fe2GOZoH
