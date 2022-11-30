@@ -26,5 +26,7 @@ policies:
       # adds tag to filtered s3 buckets
       - type: tag
         tags:
+          # General issue tag
           Security-issue: detected
+          # Specific issue tag
           Encryption: no-encryption

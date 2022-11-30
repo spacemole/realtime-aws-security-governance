@@ -46,5 +46,7 @@ policies:
       # adds tag to filtered security groups
       - type: tag
         tags:
+          # General issue tag
           Security-issue: detected
+          # Specific issue tag
           s3-Open-security: detected
