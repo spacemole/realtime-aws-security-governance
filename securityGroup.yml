@@ -46,4 +46,5 @@ policies:
       # adds tag to filtered security groups
       - type: tag
         tags:
-          Open-security: Detected
+          Security-issue: detected
+          s3-Open-security: detected
