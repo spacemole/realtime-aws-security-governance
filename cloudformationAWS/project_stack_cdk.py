@@ -73,7 +73,7 @@ class ProjectCdkStack(Stack):
         lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess"))
         lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("ResourceGroupsandTagEditorFullAccess"))
         lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("AmazonSNSFullAccess"))
-            
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess"))            
         #creating bucket to store logs
         #https://docs.aws.amazon.com/cdk/api/v1/docs/@aws-cdk_aws-s3.Bucket.html
         trail_bucket = s3_.Bucket(self,"newbucket",removal_policy=RemovalPolicy.DESTROY)
