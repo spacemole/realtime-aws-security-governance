@@ -14,7 +14,7 @@ Cloud custodian is a tool for managing resources on cloud computing platforms. U
 
 Cloud custodian can work in a variaty of modes and applications. Traditional policys are run either once on command execution or on a time interval. As this implamentation is focused on security, minimal delay is required to decrese timeframe before a security issue occours and is detected.
 
-Because of this "cloud-trail" mode was used, which allows scripts to execute in as close to real time as possible. AWS event bridge rules asses events logged in AWS cloud trail and trigger AWS Lambda funcitons as events meet the policys criteria.
+Because of this "cloud-trail" mode was used, which allows scripts to execute in as close to real time as possible. AWS event bridge rules assess events logged in AWS cloud trail and trigger AWS Lambda functions as events meet the policys criteria.
 
 The AWS Lambda function analyses the events actions and filter agains uncompliant configurations. When an event meets criterea it is tagged, and an email is sent to the administrators via AWS Sns.
 
