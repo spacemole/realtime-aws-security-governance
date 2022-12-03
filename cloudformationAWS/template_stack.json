@@ -1,5 +1,155 @@
 {
     "Resources": {
+     "CloudCustodianRole1C49CF35": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+       "AssumeRolePolicyDocument": {
+        "Statement": [
+         {
+          "Action": "sts:AssumeRole",
+          "Effect": "Allow",
+          "Principal": {
+           "Service": "lambda.amazonaws.com"
+          }
+         }
+        ],
+        "Version": "2012-10-17"
+       },
+       "Description": "Cloud Custodian Role to Execute Lambda Function",
+       "ManagedPolicyArns": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/AmazonEC2FullAccess"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/AmazonSQSFullAccess"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/IAMFullAccess"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/AmazonSESFullAccess"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/CloudWatchLogsFullAccess"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/ResourceGroupsandTagEditorFullAccess"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/AmazonSNSFullAccess"
+          ]
+         ]
+        }
+       ],
+       "Policies": [
+        {
+         "PolicyDocument": {
+          "Statement": [
+           {
+            "Action": [
+             "cloudwatch:PutMetricData",
+             "ec2:CreateNetworkInterface",
+             "ec2:DeleteNetworkInterface",
+             "ec2:DescribeNetworkInterfaces",
+             "events:PutRule",
+             "events:PutTargets",
+             "iam:PassRole",
+             "lambda:AddPermission",
+             "lambda:CreateAlias",
+             "lambda:CreateEventSourceMapping",
+             "lambda:CreateFunction",
+             "lambda:DeleteAlias",
+             "lambda:DeleteEventSourceMapping",
+             "lambda:DeleteFunction",
+             "lambda:DeleteFunctionConcurrency",
+             "lambda:InvokeFunction",
+             "lambda:PutFunctionConcurrency",
+             "lambda:RemovePermission",
+             "lambda:TagResource",
+             "lambda:UntagResource",
+             "lambda:UpdateAlias",
+             "lambda:UpdateEventSourceMapping",
+             "lambda:UpdateFunctionCode",
+             "lambda:UpdateFunctionConfiguration",
+             "logs:CreateLogGroup",
+             "logs:CreateLogStream",
+             "logs:PutLogEvents"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+           }
+          ],
+          "Version": "2012-10-17"
+         },
+         "PolicyName": "cloudcustodianpolicyrol"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/CloudCustodianRole/Resource"
+      }
+     },
      "newbucket416AE7B8": {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Delete",
@@ -259,17 +409,17 @@
        "aws:cdk:path": "ProjectCdkStack/sender"
       }
      },
-     "EncryptionGroup": {
+     "securityIssue": {
       "Type": "AWS::ResourceGroups::Group",
       "Properties": {
-       "Name": "EncryptionPolicy",
+       "Name": "securityIssue",
        "ResourceQuery": {
         "Query": {
          "TagFilters": [
           {
-           "Key": "Encryption",
+           "Key": "Security-issue",
            "Values": [
-            "no-encryption"
+            "detected"
            ]
           }
          ]
@@ -278,20 +428,20 @@
        }
       },
       "Metadata": {
-       "aws:cdk:path": "ProjectCdkStack/EncryptionGroup"
+       "aws:cdk:path": "ProjectCdkStack/securityIssue"
       }
      },
-     "OpenSecGroup": {
+     "sgOpen": {
       "Type": "AWS::ResourceGroups::Group",
       "Properties": {
-       "Name": "SecurityGroupPolicy",
+       "Name": "sg-Open",
        "ResourceQuery": {
         "Query": {
          "TagFilters": [
           {
-           "Key": "Open-security",
+           "Key": "sg-Open-security",
            "Values": [
-            "Detected"
+            "detected"
            ]
           }
          ]
@@ -300,13 +450,35 @@
        }
       },
       "Metadata": {
-       "aws:cdk:path": "ProjectCdkStack/OpenSecGroup"
+       "aws:cdk:path": "ProjectCdkStack/sg-Open"
+      }
+     },
+     "s3Encryption": {
+      "Type": "AWS::ResourceGroups::Group",
+      "Properties": {
+       "Name": "s3-Encryption",
+       "ResourceQuery": {
+        "Query": {
+         "TagFilters": [
+          {
+           "Key": "s3-Encryption",
+           "Values": [
+            "detected"
+           ]
+          }
+         ]
+        },
+        "Type": "TAG_FILTERS_1_0"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "ProjectCdkStack/s3-Encryption"
       }
      },
      "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-       "Analytics": "v2:deflate64:H4sIAAAAAAAA/01NyQ6CMBT8Fu7lucbEq8QYbyjeDZSqT0qLXWII4d/tQoKXzvams4btHpZJ+dUprZuUYwVDYUraEGfdB72B4WBpwwzJHmJiEXLJkfazHfVIKJe2NqpEDsPNgz8JZCRaaGfKDmkwAylspanCzqAU3v3XrvFxjYtllvkskvDO83/S3TMNzju2bu9cM2HQ9EQxLa2i7Kmk7UJ+8mz07euUeZ5JUWPczXvzkmKxgdUSdslbI6bKut9aBteIPwAXxnE6AQAA"
+       "Analytics": "v2:deflate64:H4sIAAAAAAAA/02Py27CMBBFv4W9M4VSVWILQqi78Nij4Jh2iOMJfqiKrPw7YxsJNr53zjz9CV8rmM+af1fJtqs0XiAefSM7wegcsekhHkgrsbmapJNwS4jrIDvlE3u6IjVplOMLl3gSUlNovW1QQzwlSSXZ8DjjGNKAMsNsjuHipMXBI5lE32PuuHPHPqiQjyomv6/1byHXKwfMtj3v+2mV8ehHYZWjYKX6tRSGnN8lN+V/PnPJb8i0WPbWo/8j87GExRy+ZzeHWNnA03oFh6IPpc7u7U0BAAA="
       },
       "Metadata": {
        "aws:cdk:path": "ProjectCdkStack/CDKMetadata/Default"
