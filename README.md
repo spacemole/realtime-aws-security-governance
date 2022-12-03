@@ -31,6 +31,8 @@ The following stages must be completed
 
 AWS resources needed for this implementation have been pre-configured and can be deployed using the CloudFormation template or CDK stack. To find the files, open the folder [cloudformationAWS](https://github.com/spacemole/realtime-aws-security-governance/tree/main/cloudformation).
 
+The email in the SNS topic should be changed before using the template or stack.
+
 To use the template_stack.json, open the [CloudFormation Console](https://console.aws.amazon.com/cloudformation/), and create a new stack.
 
 To deploy the resources through the stack, copy the code into the cdk project, and run the command:

@@ -98,9 +98,11 @@ class ProjectCdkStack(Stack):
         #https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_sns_subscriptions.SqsSubscription.html
         topic.add_subscription(subscriptions_.SqsSubscription(queue))
         #sns email subscription
+        #change the email, this email is who is receiving the message
         topic.add_subscription(subscriptions_.EmailSubscription("evelyncaviedesa@gmail.com"))
         #ses verify identities
         #https://docs.aws.amazon.com/cdk/api/v1/docs/aws-ses-readme.html
+        #change the emails
         ses_.CfnEmailIdentity(self,"receipt",email_identity="103483662@student.swin.edu.au")
         ses_.CfnEmailIdentity(self,"sender",email_identity="evelyncaviedesa@gmail.com")
         #resource groups
