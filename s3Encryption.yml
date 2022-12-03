@@ -29,20 +29,20 @@ policies:
           # General issue tag
           Security-issue: detected
           # Specific issue tag
-          Encryption: no-encryption
+          s3-Encryption: no-encryption
         #send email     
-        notify:
-          #template that will be used to create the email
-          template: email.html
-          #email subject 
-          subject: Bucket No-Encrypted account {{ account_id }} region {{ region }} 
-          #security violation name
-          violation_desc: Bucket Encrypted Disable
-          #email of recipient
-          to:
-            - CloudCustodianAdminEmail@Company.com
-          #transport type used to send email  
-          transport:
-            type: sqs
-            #queue link
-            queue: https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS
+      - type: notify
+        #template that will be used to create the email
+        template: email.html
+        #email subject 
+        subject: Bucket No-Encrypted account {{ account_id }} region {{ region }} 
+        #security violation name
+        violation_desc: Bucket Encrypted Disable
+        #email of recipient
+        to:
+          - CloudCustodianAdminEmail@Company.com
+        #transport type used to send email  
+        transport:
+          type: sqs
+          #queue link
+          queue: https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS

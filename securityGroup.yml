@@ -41,20 +41,20 @@ policies:
           # General issue tag
           Security-issue: detected
           # Specific issue tag
-          s3-Open-security: detected
+          sg-Open-security: detected
         #send email     
-        notify:
-          #template that will be used to create the email
-          template: email.html
-          #email subject 
-          subject: Security Group Open account {{ account_id }} region {{ region }} 
-          #security violation name
-          violation_desc: Security Group CIDR = 0.0.0.0/0
-          #email of recipient
-          to:
-            - CloudCustodianAdminEmail@Company.com
-          #transport type used to send email  
-          transport:
-            type: sqs
-            #queue link
-            queue: https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS
+      - type: notify
+        #template that will be used to create the email
+        template: email.html
+        #email subject 
+        subject: Security Group Open account {{ account_id }} region {{ region }} 
+        #security violation name
+        violation_desc: Security Group CIDR = 0.0.0.0/0
+        #email of recipient
+        to:
+          - CloudCustodianAdminEmail@Company.com
+        #transport type used to send email  
+        transport:
+          type: sqs
+          #queue link
+          queue: https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS
