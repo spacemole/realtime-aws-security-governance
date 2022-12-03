@@ -1,0 +1,10 @@
+#queue link subscribed to a lambda mailer function
+queue_url:  https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS
+#role to send the email
+role: CloudCustodianEmailRole
+#remitter email
+from_address: email@Company.com
+#account region 
+region: region
+#ses region
+ses_region: region

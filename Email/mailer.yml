@@ -1,5 +1,0 @@
-queue_url: https://sqs.ap-southeast-2.amazonaws.com/174738046784/ProjectCdkStack-CloudCustodianSqs079A617A-hCq3Fe2GOZoH
-role: arn:aws:iam::174738046784:role/AwsCdkApiStack-MyLambdaFunctionServiceRole313A4D46-1TUKIG2VRRVV2
-from_address: evelyncaviedesa@gmail.com
-region: ap-southeast-2
-ses_region: ap-southeast-2
