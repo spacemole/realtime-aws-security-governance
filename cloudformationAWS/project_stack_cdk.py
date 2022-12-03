@@ -9,7 +9,8 @@ from aws_cdk import (
     aws_sqs as sqs_,
     aws_ses as ses_,
     aws_resourcegroups as resourcegroups_,
-    CfnTag as cfntag_
+    CfnTag as cfntag_,
+    aws_iam as iam_
 )
 
 from constructs import Construct
@@ -19,6 +20,60 @@ class ProjectCdkStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        #creating cloudcustodian policy for the role
+        #https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_iam/PolicyDocument.html
+        cloudcustodianpolicyrol=iam_.PolicyDocument(
+            statements= [iam_.PolicyStatement(
+                actions=[
+                        "cloudwatch:PutMetricData",
+                        "ec2:DescribeNetworkInterfaces",
+                        "ec2:DeleteNetworkInterface",
+                        "ec2:CreateNetworkInterface",
+                        "events:PutRule",
+                        "events:PutTargets",
+                        "iam:PassRole",
+                        "lambda:CreateFunction",
+                        "lambda:TagResource",
+                        "lambda:CreateEventSourceMapping",
+                        "lambda:UntagResource",
+                        "lambda:PutFunctionConcurrency",
+                        "lambda:DeleteFunction",
+                        "lambda:UpdateEventSourceMapping",
+                        "lambda:InvokeFunction",
+                        "lambda:UpdateFunctionConfiguration",
+                        "lambda:UpdateAlias",
+                        "lambda:UpdateFunctionCode",
+                        "lambda:AddPermission",
+                        "lambda:DeleteAlias",
+                        "lambda:DeleteFunctionConcurrency",
+                        "lambda:DeleteEventSourceMapping",
+                        "lambda:RemovePermission",
+                        "lambda:CreateAlias",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents",
+                        "logs:CreateLogGroup"                    
+                         ],
+                resources=["*"]
+            )]
+        )
+        #creating the iam role
+        #https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_iam/Role.html
+        lambda_role = iam_.Role(self, "CloudCustodianRole",
+            assumed_by=iam_.ServicePrincipal("lambda.amazonaws.com"),
+            description="Cloud Custodian Role to Execute Lambda Function",
+            inline_policies={"cloudcustodianpolicyrol":cloudcustodianpolicyrol}
+        )
+       
+        #attach policies to the role
+        #https://docs.aws.amazon.com/cdk/api/v1/python/aws_cdk.aws_iam/ManagedPolicy.html
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("AmazonEC2FullAccess"))
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("AmazonSQSFullAccess"))
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("IAMFullAccess"))
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("AmazonSESFullAccess"))
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess"))
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("ResourceGroupsandTagEditorFullAccess"))
+        lambda_role.add_managed_policy(iam_.ManagedPolicy.from_aws_managed_policy_name("AmazonSNSFullAccess"))
+            
         #creating bucket to store logs
         #https://docs.aws.amazon.com/cdk/api/v1/docs/@aws-cdk_aws-s3.Bucket.html
         trail_bucket = s3_.Bucket(self,"newbucket",removal_policy=RemovalPolicy.DESTROY)
@@ -51,7 +106,12 @@ class ProjectCdkStack(Stack):
         #resource groups
         #https://docs.aws.amazon.com/cdk/api/v1/docs/@aws-cdk_aws-resourcegroups.CfnGroup.html
         #https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.CfnTag.html
-        resourcegroups_.CfnGroup(self, "EncryptionGroup",name="EncryptionPolicy",resource_query=resourcegroups_.CfnGroup.ResourceQueryProperty(
-            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="Encryption",values=["no-encryption"])]),type="TAG_FILTERS_1_0"))
-        resourcegroups_.CfnGroup(self, "OpenSecGroup",name="SecurityGroupPolicy",resource_query=resourcegroups_.CfnGroup.ResourceQueryProperty(
-            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="Open-security",values=["Detected"])]),type="TAG_FILTERS_1_0"))
+        #this tag will be in both policies
+        resourcegroups_.CfnGroup(self, "securityIssue",name="securityIssue",resource_query=resourcegroups_.CfnGroup.ResourceQueryProperty(
+            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="Security-issue",values=["detected"])]),type="TAG_FILTERS_1_0"))
+        #this tag is for security group policy
+        resourcegroups_.CfnGroup(self, "sg-Open",name="sg-Open",resource_query=resourcegroups_.CfnGroup.ResourceQueryProperty(
+            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="sg-Open-security",values=["detected"])]),type="TAG_FILTERS_1_0"))
+        #this tag is for s3 Bucket policy
+        resourcegroups_.CfnGroup(self, "s3-Encryption",name="s3-Encryption",resource_query=resourcegroups_.CfnGroup.ResourceQueryProperty(
+            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="s3-Encryption",values=["detected"])]),type="TAG_FILTERS_1_0"))        
