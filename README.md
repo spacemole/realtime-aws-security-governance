@@ -22,17 +22,10 @@ The AWS Lambda function analyses the events actions and filter agains uncomplian
 ## Installation Guide
 The following stages must be completed
 
-- Install cloud custodian
 - AWS resources set-up 
+- Install cloud custodian
 - Configure Custodian mailer
 
-
-
-
-#### **Installing Cloud Custodian**
-
-Cloud custodian can be installed from most systems, including Linux, OSX, Windows and Docker.
-Follow the following link to the [cloud custodian instalation documetation](https://cloudcustodian.io/docs/quickstart/index.html) and install on your system.
 
 #### **AWS resources set-up**
 
@@ -44,6 +37,22 @@ To deploy the resources through the stack, copy the code into the cdk project, a
  ```
  cdk deploy
  ```
+
+The AWS resources created are:
+- IAM Role
+- Trail
+- Bucket
+- SNS Topic
+- Queue
+- Email Subscription
+- Queue Subscription
+- Resources Groups
+
+
+#### **Installing Cloud Custodian**
+
+Cloud custodian can be installed from most systems, including Linux, OSX, Windows and Docker.
+Follow the following link to the [cloud custodian instalation documetation](https://cloudcustodian.io/docs/quickstart/index.html) and install on your system.
 
 
 #### **Configure Custodian Mailer**
