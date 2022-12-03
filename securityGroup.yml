@@ -8,23 +8,15 @@ policies:
         # cloud trail enable real time policy execution
         type: cloudtrail
         # Iam role in AWS for Cloud custodian to gain permissions
-        role: TimLambdaAdmin
+        role: CloudCustodianRole
         events:
           # event for adding new incomming securtiy rule
           - source: ec2.amazonaws.com
             event: AuthorizeSecurityGroupIngress
             ids: "responseElements.securityGroupRuleSet.items[].groupId"
-          # event for adding new outgoing securtiy rule
-          - source: ec2.amazonaws.com
-            event: AuthorizeSecurityGroupEgress
-            ids: "responseElements.securityGroupRuleSet.items[].groupId"
           # event for removing new incomming securtiy rule
           - source: ec2.amazonaws.com
             event: RevokeSecurityGroupIngress
-            ids: "requestParameters.groupId"
-          # event for removing new outgoing securtiy rule
-          - source: ec2.amazonaws.com
-            event: RevokeSecurityGroupEgress
             ids: "requestParameters.groupId"
           # event for creating a new security group
           - source: ec2.amazonaws.com
@@ -50,12 +42,19 @@ policies:
           Security-issue: detected
           # Specific issue tag
           s3-Open-security: detected
+        #send email     
         notify:
+          #template that will be used to create the email
           template: email.html
+          #email subject 
           subject: Security Group Open account {{ account_id }} region {{ region }} 
+          #security violation name
           violation_desc: Security Group CIDR = 0.0.0.0/0
+          #email of recipient
           to:
-            - ecaviedesar@gmail.com
+            - CloudCustodianAdminEmail@Company.com
+          #transport type used to send email  
           transport:
             type: sqs
-            queue: https://sqs.ap-southeast-2.amazonaws.com/174738046784/ProjectCdkStack-CloudCustodianSqs079A617A-hCq3Fe2GOZoH
+            #queue link
+            queue: https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS

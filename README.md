@@ -14,7 +14,7 @@ Cloud custodian is a tool for managing resources on cloud computing platforms. U
 
 Cloud custodian can work in a variaty of modes and applications. Traditional policys are run either once on command execution or on a time interval. As this implamentation is focused on security, minimal delay is required to decrese timeframe before a security issue occours and is detected.
 
-Becsause of this"cloud-trail" mode was used, which allows scripts to execute in as close to real time as possible. AWS event bridge rules asses events logged in AWS cloud trail and trigger AWS Lambda funcitons as events meet the policys criteria.
+Because of this "cloud-trail" mode was used, which allows scripts to execute in as close to real time as possible. AWS event bridge rules asses events logged in AWS cloud trail and trigger AWS Lambda funcitons as events meet the policys criteria.
 
 The AWS Lambda function analyses the events actions and filter agains uncompliant configurations. When an event meets criterea it is tagged, and an email is sent to the administrators via AWS Sns.
 
@@ -36,15 +36,26 @@ Follow the following link to the [cloud custodian instalation documetation](http
 
 #### **AWS resources set-up**
 
-AWS resources needed for this implamentation have been pre configured and can be deployed through xxxxx in the AWS CLI.
+AWS resources needed for this implementation have been pre-configured and can be deployed using the CloudFormation template or CDK stack. To find the files, open the folder [cloudformationAWS](https://github.com/spacemole/realtime-aws-security-governance/tree/main/cloudformation).
 
-xyz
+To use the template, open the [CloudFormation Console](https://console.aws.amazon.com/cloudformation/), and create a new stack.
+
+To deploy the resources through the stack, copy the code into the cdk project, and run the command:
+ ```
+ cdk deploy
+ ```
 
 
 #### **Configure Custodian Mailer**
-Custodian mailer is an additional tool that can be installed to allow notifications through cloud custodian policies.
+Custodian Mailer is an additional tool that can be installed to allow notifications through cloud custodian policies.
 Follow the email section of the [guide](https://cloudcustodian.io/docs/tools/c7n-mailer.html) on the cloud custodian documentation.
-xxxxxxxxx add our files
+
+To set up the mailer tool, open the [mailer.yml](https://github.com/spacemole/realtime-aws-security-governance/blob/main/Email/mailer.yml) file and edit it, and run the command:
+```
+ c7n-mailer --config mailer.yml --update-lambda
+ ```
+
+Cloud Custodian Mailer uses a template to create the email, to edit it open the [email.html.j2](https://github.com/spacemole/realtime-aws-security-governance/blob/main/Email/email.html.j2).
 
 #### **Running YML policy**
 ##### Run cloud custodian on chosen system with following commands:

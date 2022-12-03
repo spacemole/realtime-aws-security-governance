@@ -8,7 +8,7 @@ policies:
         # cloud trail enable real time policy execution
         type: cloudtrail
         # Iam role in AWS for Cloud custodian to gain permissions
-        role: TimLambdaAdmin
+        role: CloudCustodianRole
         events:
           # event for creating new s3 bucket
           - source: s3.amazonaws.com
@@ -30,12 +30,19 @@ policies:
           Security-issue: detected
           # Specific issue tag
           Encryption: no-encryption
+        #send email     
         notify:
+          #template that will be used to create the email
           template: email.html
-          subject: Bucket No-Encryption account {{ account_id }} region {{ region }} 
-          violation_desc: Bucket Encryption Disable
+          #email subject 
+          subject: Bucket No-Encrypted account {{ account_id }} region {{ region }} 
+          #security violation name
+          violation_desc: Bucket Encrypted Disable
+          #email of recipient
           to:
-            - ecaviedesar@gmail.com
+            - CloudCustodianAdminEmail@Company.com
+          #transport type used to send email  
           transport:
             type: sqs
-            queue: https://sqs.ap-southeast-2.amazonaws.com/174738046784/ProjectCdkStack-CloudCustodianSqs079A617A-hCq3Fe2GOZoH
+            #queue link
+            queue: https://sqs.region.amazonaws.com/AWSaccount/CloudCustodianSQS
