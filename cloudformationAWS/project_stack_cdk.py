@@ -116,4 +116,4 @@ class ProjectCdkStack(Stack):
             query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="sg-Open-security",values=["detected"])]),type="TAG_FILTERS_1_0"))
         #this tag is for s3 Bucket policy
         resourcegroups_.CfnGroup(self, "s3-Encryption",name="s3-Encryption",resource_query=resourcegroups_.CfnGroup.ResourceQueryProperty(
-            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="s3-Encryption",values=["detected"])]),type="TAG_FILTERS_1_0"))        
+            query=resourcegroups_.CfnGroup.QueryProperty(tag_filters=[resourcegroups_.CfnGroup.TagFilterProperty(key="s3-Encryption",values=["no-encryption"])]),type="TAG_FILTERS_1_0"))        
