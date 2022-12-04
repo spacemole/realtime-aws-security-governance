@@ -463,7 +463,7 @@
           {
            "Key": "s3-Encryption",
            "Values": [
-            "detected"
+            "no-encryption"
            ]
           }
          ]
