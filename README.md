@@ -94,7 +94,7 @@ $Env:AWS_ACCESS_KEY_ID="INSERT_KEY_HERE"; $Env:AWS_SECRET_ACCESS_KEY="INSERT_KEY
 
 Example command:
 ```bash {cmd}
-$Env:AWS_ACCESS_KEY_ID="XXXXXXXX0XXX4E2RJN4F"; $Env:AWS_SECRET_ACCESS_KEY="XecbrS5sv7JdocZuLHevHtLp+G86RwCd24f28RWj" ; $Env:AWS_DEFAULT_REGION="ap-southeast-2" ; custodian run --output-dir=. securitygroup.yml
+$Env:AWS_ACCESS_KEY_ID="XXXXXXXX0XXX4E2RJN4F"; $Env:AWS_SECRET_ACCESS_KEY="XXXXXXXsv7JdocZuLHevHtLp+G86RwCd24f28RWj" ; $Env:AWS_DEFAULT_REGION="ap-southeast-2" ; custodian run --output-dir=. securitygroup.yml
 ```
 
 
